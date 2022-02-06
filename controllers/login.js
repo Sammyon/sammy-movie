@@ -48,7 +48,7 @@ class ControllerLogin {
             role: data.role,
             phoneNumber: data.username,
             address: data.address,
-            joinDate: data.joinDate
+            joinDate: data.joinDate,
           };
           const genToken = token(payload);
           res.status(200).json({ token: genToken });
@@ -89,7 +89,9 @@ class ControllerLogin {
         role: newUser.role,
       };
       const genToken = token(payloadToken);
-      res.status(201).json({ email: payload.email, isCreated, token: genToken });
+      res
+        .status(201)
+        .json({ email: payload.email, isCreated, token: genToken });
     } catch (error) {
       next(error);
     }
@@ -124,10 +126,10 @@ class ControllerLogin {
       const { token } = req.headers;
       const { authorId } = verToken(token);
       const user = await User.findOne({
-        attributes: {exclude: ['password']},
+        attributes: { exclude: ["password"] },
         where: {
-          id: authorId
-        }
+          id: authorId,
+        },
       });
       if (!user) throw "User Not Found";
       res.status(200).json({ user });
@@ -138,4 +140,3 @@ class ControllerLogin {
 }
 
 module.exports = ControllerLogin;
-

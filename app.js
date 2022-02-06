@@ -8,9 +8,9 @@ const app = express();
 const routes = require("./routes");
 const PORT = process.env.PORT || 3000;
 
-console.log(process.env.NODE_ENV)
+// console.log(process.env.NODE_ENV)
 app.use(cors({
-  origin: 'http://localhost:5500',
+  origin: 'https://sammy-movies-client.web.app',
 }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
