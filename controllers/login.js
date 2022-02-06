@@ -2,7 +2,6 @@ const { User, Movie, Genre } = require("../models");
 const bcrypt = require("bcryptjs");
 const { token, verToken } = require("../helpers/jwt");
 const { OAuth2Client } = require("google-auth-library");
-const { password } = require("pg/lib/defaults");
 //! NANTI TARUH DI ENV
 const clientID = new OAuth2Client(
   "975317000402-j24p2neqo5hborgvhu0q3mp6oor07he2.apps.googleusercontent.com"
@@ -90,7 +89,7 @@ class ControllerLogin {
         role: newUser.role,
       };
       const genToken = token(payloadToken);
-      res.status(201).json({ isCreated, token: genToken });
+      res.status(201).json({ email: payload.email, isCreated, token: genToken });
     } catch (error) {
       next(error);
     }
