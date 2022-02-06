@@ -3,9 +3,7 @@ const bcrypt = require("bcryptjs");
 const { token, verToken } = require("../helpers/jwt");
 const { OAuth2Client } = require("google-auth-library");
 //! NANTI TARUH DI ENV
-const clientID = new OAuth2Client(
-  "975317000402-j24p2neqo5hborgvhu0q3mp6oor07he2.apps.googleusercontent.com"
-);
+const clientID = new OAuth2Client(process.env.CLIENT_ID);
 
 class ControllerLogin {
   static async register(req, res, next) {
