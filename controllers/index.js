@@ -1,12 +1,12 @@
-const { verToken } = require("../helpers/jwt");
-const { User, Movie, Genre } = require("../models");
+const { User, Movie, Genre, History } = require("../models");
+const {Op} = require ('sequelize')
 
 class Controller {
   static async addMovie(req, res, next) {
     try {
-      const { token } = req.headers;
       const { title, synopsis, trailerUrl, imgUrl, rating, genreId } = req.body;
-      const { authorId } = verToken(token);
+      // console.log(req.body, `REG BODY`);
+      const { authorId, email } = req.user;
       let addMovie = await Movie.create({
         title,
         synopsis,
@@ -15,7 +15,15 @@ class Controller {
         rating,
         genreId,
         authorId,
+        status: "active",
       });
+      let history = await History.create({
+        entityId: addMovie.id,
+        name: addMovie.title,
+        description: `Movie with id ${addMovie.id} created`,
+        updatedBy: email,
+      });
+      // console.log(addMovie, `DATA`);
       res.status(201).json(addMovie);
     } catch (error) {
       next(error);
@@ -28,6 +36,11 @@ class Controller {
         include: {
           model: Genre,
         },
+        where: {
+          status: {
+            [Op.not]: "archived"
+          }
+        }
       });
       // console.log(moviesData);
       res.status(200).json(moviesData);
@@ -52,10 +65,10 @@ class Controller {
   }
 
   static async editMovie(req, res, next) {
+    // console.log(req.params, `MASUK`);
     try {
-      const { token } = req.headers;
       const { title, synopsis, trailerUrl, imgUrl, rating, genreId } = req.body;
-      const { authorId } = verToken(token);
+      const { authorId, email } = req.user;
       const { movieId } = req.params;
       let movieData = await Movie.update(
         { title, synopsis, trailerUrl, imgUrl, rating, genreId, authorId },
@@ -65,11 +78,17 @@ class Controller {
           },
           returning: true,
         }
-        );
-        if (!movieData) throw { name: "noMovie" };
-        console.log(title, synopsis, trailerUrl, imgUrl, rating, authorId, genreId, `DONE UPDATE`);
-        res.status(200).json(movieData);
-      } catch (error) {
+      );
+      if (!movieData) throw { name: "noMovie" };
+      let history = await History.create({
+        entityId: movieData[1][0].id,
+        name: movieData[1][0].title,
+        description: `Movie with id ${movieData[1][0].id} updated`,
+        updatedBy: email,
+      });
+      // console.log(title, synopsis, trailerUrl, imgUrl, rating, authorId, genreId, `DONE UPDATE`);
+      res.status(200).json(movieData);
+    } catch (error) {
       next(error);
     }
   }
@@ -77,6 +96,7 @@ class Controller {
   static async deleteMovie(req, res, next) {
     try {
       const { movieId } = req.params;
+      const { email } = req.user;
       let movieData = await Movie.findOne({
         where: {
           id: movieId,
@@ -89,7 +109,85 @@ class Controller {
           id: movieId,
         },
       });
+      // let history = await History.create({
+      //   entityId: movieData.id,
+      //   name: movieData.title,
+      //   description: `Movie with id ${movieData.id} permanently deleted`,
+      //   updatedBy: email
+      // })
       res.status(200).json(movieData);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async updateStatus(req, res, next) {
+    try {
+      const { movieId } = req.params;
+      const { status } = req.body;
+      const { email } = req.user;
+      // console.log(status, `STATUS`);
+      let movieDataOld = await Movie.findOne({
+        attributes: ["status"],
+        where: {
+          id: movieId,
+        },
+      });
+      // console.log(movieDataOld, `OLD STATUS`);
+      if (!movieDataOld) throw { name: "noMovie" };
+      let movieData = await Movie.update(
+        { status },
+        {
+          where: {
+            id: movieId,
+          },
+          returning: true,
+        }
+      );
+      let history = await History.create({
+        entityId: movieData[1][0].id,
+        name: movieData[1][0].title,
+        description: `Movie with id ${
+          movieData[1][0].id
+        } status has been updated from ${!movieDataOld.status} to${!movieData.status}`,
+        updatedBy: email,
+      });
+      // console.log(title, synopsis, trailerUrl, imgUrl, rating, authorId, genreId, `DONE UPDATE`);
+      res.status(200).json(movieData);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async archived(req, res, next) {
+    try {
+      const { movieId } = req.params;
+      const { email } = req.user;
+      let movieData = await Movie.update(
+        { status: `archived` },
+        {
+          where: {
+            id: movieId,
+          },
+          returning: true,
+        }
+      );
+      let history = await History.create({
+        entityId: movieData[1][0].id,
+        name: movieData[1][0].title,
+        description: `Movie with id ${movieData[1][0].id} permanently deleted`,
+        updatedBy: email,
+      });
+      res.status(200).json(movieData);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async listHistory(req, res) {
+    try {
+      let data = await History.findAll();
+      res.status(200).json(data);
     } catch (error) {
       next(error);
     }

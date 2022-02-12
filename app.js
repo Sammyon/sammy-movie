@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3000;
 
 // console.log(process.env.NODE_ENV)
 app.use(cors({
-  origin: 'https://sammy-movies-client.web.app',
+  origin: "https://sammy-movies-new.web.app"
 }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json())

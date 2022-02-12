@@ -11,7 +11,8 @@ router.use("/google", google);
 
 router.use(authenticator);
 
-router.use("/genres", Controller.listGenre)
+router.get("/genres", Controller.listGenre)
+router.get("/histories", Controller.listHistory)
 router.use("/movies", movies);
 
 

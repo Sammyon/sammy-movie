@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Movie.belongsTo(models.User, {foreignKey: "authorId"})
       Movie.belongsTo(models.Genre, {foreignKey: "genreId"})
+      Movie.hasMany(models.History, {foreignKey: "entityId"})
     }
   }
   Movie.init({
@@ -47,7 +48,8 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     genreId: DataTypes.INTEGER,
-    authorId: DataTypes.INTEGER
+    authorId: DataTypes.INTEGER,
+    status: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Movie',

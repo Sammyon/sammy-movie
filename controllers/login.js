@@ -1,6 +1,6 @@
 const { User, Movie, Genre } = require("../models");
 const bcrypt = require("bcryptjs");
-const { token, verToken } = require("../helpers/jwt");
+const { token } = require("../helpers/jwt");
 const { OAuth2Client } = require("google-auth-library");
 //! NANTI TARUH DI ENV
 const clientID = new OAuth2Client(process.env.CLIENT_ID);
@@ -44,12 +44,9 @@ class ControllerLogin {
             email: data.email,
             username: data.username,
             role: data.role,
-            phoneNumber: data.username,
-            address: data.address,
-            joinDate: data.joinDate,
           };
           const genToken = token(payload);
-          res.status(200).json({ token: genToken });
+          res.status(200).json({ token: genToken, username: data.username, role: data.role, });
         }
       }
     } catch (error) {
@@ -63,8 +60,7 @@ class ControllerLogin {
       const { googleToken } = req.body;
       const ticket = await clientID.verifyIdToken({
         idToken: googleToken,
-        audience:
-          "975317000402-j24p2neqo5hborgvhu0q3mp6oor07he2.apps.googleusercontent.com",
+        audience: process.env.CLIENT_ID,
       }); //? Verify Google Token
       const payload = ticket.getPayload(); //? Decrypt isi googleToken
       // console.log(payload, `PAYLOAD GOOGLE`);
@@ -121,8 +117,7 @@ class ControllerLogin {
 
   static async userDetail(req, res, next) {
     try {
-      const { token } = req.headers;
-      const { authorId } = verToken(token);
+      const { authorId } = req.user;
       const user = await User.findOne({
         attributes: { exclude: ["password"] },
         where: {
