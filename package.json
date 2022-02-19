@@ -7,6 +7,7 @@
     "start": "node bin/www.js",
     "nodemon": "npx nodemon bin/www.js",
     "testdb": "npx sequelize-cli --env=test db:drop && npx sequelize-cli --env=test db:create && npx sequelize-cli --env=test db:migrate && npx sequelize-cli --env=test db:seed:all",
+    "proddb": "npx sequelize-cli db:drop && npx sequelize-cli db:create && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
     "test": "npx jest customer.test.js --detectOpenHandles --forceExit --runInBand"
   },
   "repository": {
