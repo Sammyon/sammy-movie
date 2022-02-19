@@ -5,4 +5,8 @@ function encrypt(password, salt = 10) {
   return bcrypt.hashSync(password, salted)
 }
 
-module.exports = encrypt
+function decrypt(password, hash) {
+  return bcrypt.compareSync(password, hash)
+}
+
+module.exports = {encrypt, decrypt}

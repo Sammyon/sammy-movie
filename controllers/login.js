@@ -1,6 +1,6 @@
 const { User, Movie, Genre } = require("../models");
-const bcrypt = require("bcryptjs");
 const { token } = require("../helpers/jwt");
+const { decrypt } = require("../helpers/bcrypt");
 const { OAuth2Client } = require("google-auth-library");
 //! NANTI TARUH DI ENV
 const clientID = new OAuth2Client(process.env.CLIENT_ID);
@@ -26,6 +26,7 @@ class ControllerLogin {
   static async login(req, res, next) {
     try {
       const { email, password } = req.body;
+      console.log(email, password);
       if (!email || !password) throw { name: "noInput" };
       let data = await User.findOne({
         where: {
@@ -35,7 +36,7 @@ class ControllerLogin {
       if (!data) {
         throw { name: "noEmail" };
       } else {
-        const login = bcrypt.compareSync(password, data.password);
+        const login = decrypt(password, data.password);
         if (!login) {
           throw { name: "wrongPassword" };
         } else {

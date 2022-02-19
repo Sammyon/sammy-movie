@@ -5,9 +5,11 @@ const authenticator = require("../middlewares/authenticator");
 const movies = require("./movies");
 const users = require("./users");
 const google = require("./google");
+const customers = require("./customers");
 
 router.use("/users", users);
 router.use("/google", google);
+router.use("/customers", customers);
 
 router.use(authenticator);
 

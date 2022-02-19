@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       Movie.belongsTo(models.User, {foreignKey: "authorId"})
       Movie.belongsTo(models.Genre, {foreignKey: "genreId"})
       Movie.hasMany(models.History, {foreignKey: "entityId"})
+      // Movie.belongsToMany(models.User, {through: models.WatchList})
     }
   }
   Movie.init({

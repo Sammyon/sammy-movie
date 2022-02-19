@@ -4,7 +4,10 @@
   "description": "CMS Integration - Server",
   "main": "index.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node bin/www.js",
+    "nodemon": "npx nodemon bin/www.js",
+    "testdb": "npx sequelize-cli --env=test db:drop && npx sequelize-cli --env=test db:create && npx sequelize-cli --env=test db:migrate && npx sequelize-cli --env=test db:seed:all",
+    "test": "npx jest customer.test.js --detectOpenHandles --forceExit --runInBand"
   },
   "repository": {
     "type": "git",
@@ -29,7 +32,9 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
+    "jest": "^27.5.1",
     "nodemon": "^2.0.15",
-    "sequelize-cli": "^6.4.1"
+    "sequelize-cli": "^6.4.1",
+    "supertest": "^6.2.2"
   }
 }

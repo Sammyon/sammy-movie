@@ -56,7 +56,13 @@ class Controller {
         where: {
           id: movieId,
         },
+        include: {
+          model: Genre,
+        }
       });
+      // if (movieData.status === "archived") {
+
+      // }
       if (!movieData) throw { name: "noMovie" };
       res.status(200).json(movieData);
     } catch (error) {
@@ -87,7 +93,7 @@ class Controller {
         updatedBy: email,
       });
       // console.log(title, synopsis, trailerUrl, imgUrl, rating, authorId, genreId, `DONE UPDATE`);
-      res.status(200).json(movieData);
+      res.status(200).json(movieData[1][0]);
     } catch (error) {
       next(error);
     }

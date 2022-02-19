@@ -11,6 +11,17 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
+    let data = [{
+      username: "Adit",
+      email: "adit@email.com",
+      password: "secure",
+      role: "user",
+      phoneNumber: "test",
+      address: "test",
+      createdAt : new Date(),
+      updatedAt : new Date(),
+    }]
+     await queryInterface.bulkInsert("Users", data)
   },
 
   async down (queryInterface, Sequelize) {

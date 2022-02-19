@@ -21,7 +21,7 @@ function errorHandler(err, req, res, next) {
       res.status(403).json({ Error: "Not Enough Authority" });
       break;
     case "noInput":
-      res.status(401).json({ Error: "Input Name and Password" });
+      res.status(401).json({ Error: "Input Email and Password" });
       break;  
     case "wrongPassword":
       res.status(401).json({ Error: "Wrong Email or Password" });

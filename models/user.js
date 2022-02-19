@@ -1,5 +1,5 @@
 'use strict';
-const encrypt = require('../helpers/bcrypt')
+const {encrypt} = require('../helpers/bcrypt')
 const {Op} = require("sequelize")
 
 const {
@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       User.hasMany(models.Movie, {foreignKey: "authorId"})
+      // User.belongsToMany(models.Movie, {through: models.WatchList})
     }
 
     get joinDate () {
